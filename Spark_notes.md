@@ -109,7 +109,12 @@ RDDs in spark are lazily evaluated.
             - Note that `persist()` does not force evaluation.
         - The nodes that compute the RDD store their partitions.
             - That means, if the node that has data persisted on it fails, Spark will recompute the lost partitions when necessary.
-        - Storage Levels: ![Persistence Levels](image.png)
+        - Storage Levels:
+            - `MEMORY_ONLY`
+            - `MEMORY_ONLY_SER`
+            - `MEMORY_AND_DISK`
+            - `MEMORY_AND_DISK_SER`
+            - `DISK_ONLY`
         - If the user attempts to cache too much data in memory, spark will evict old partitions using LRU cache policy.
             - If purely memory, partitions are recomputed when they are accessed.
             - If memory-disk, old partitions are written to disk.
@@ -141,6 +146,29 @@ From a regular RDD:
     - Call `mapToPair(func)`, where func is of the class `PairFunction<(pdd type), (key type), (value type)>`
 
 From an in-memory collection:
-
 - py and Scala: `SparkContext.parallelize()` on a list of tuples
 - Java: `SparkContext.parallelizePairs()` on a list of `Tuple2`s.
+
+#### Transformations on Pair RDDs
+
+Pair RDDs support the standard RDD transformations, as well as some functions exclusive to the key-value structure:
+- Examples include, but are not exclusive to:
+    - `reduceByKey()`
+        - Combines values with the same key
+    - `groupByKey()`
+        - Groups values with the same key
+    - `mapValues()`
+        - Apply function to value in key-value pair. Key is unchanged.
+- In fact, transformations on Pair RDDs exist as well
+    - `subtractByKey()`
+        - Removes an element if its key is present in the other RDD
+    - `join()`
+        - Inner join
+    - `cogroup()`
+        - Group data sharing the same key
+
+In fact, we can separate them into a different families of functions
+
+##### Aggregations
+
+
