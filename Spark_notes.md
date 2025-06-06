@@ -151,8 +151,8 @@ From an in-memory collection:
 
 #### Transformations on Pair RDDs
 
-Pair RDDs support the standard RDD transformations, as well as some functions exclusive to the key-value structure:
-- Examples include, but are not exclusive to:
+- All standard RDD transformations
+- Special functions (Examples include, but are not exclusive to):
     - `reduceByKey()`
         - Combines values with the same key
     - `groupByKey()`
@@ -168,7 +168,115 @@ Pair RDDs support the standard RDD transformations, as well as some functions ex
         - Group data sharing the same key
 
 In fact, we can separate them into a different families of functions
+- Aggregations
+    - Some form of combining in place
+        -`groupByKey()`
+        -`reduceByKey()`
 
-##### Aggregations
+##### Common Usecases
+
+###### Grouping Data
+Aggregating values that share the same key together.
+- We get a RDD of type `[K, Iterable[V]]`.
+
+If data is unpaird or we want to use a different condition, we can use `groupBy` which takes in a function that can be applied to the RDD element to determine the key.
+- We get a RDD of type `[K, Iterable[V]]` as well, but the key would be the result of `function(element)`
+
+If you do intend on `reduce()` or `fold()`-ing the values afterwards, the per-key aggregation functions would be more efficient, as `groupBy(Key)` creates an extra list per key to hold its values, and simply using the aggregation function will avoid this inefficiency.
+
+**Joins**
+
+Basically the same idea as joins in SQL.
+- Inner Join
+    - RDD contains key/value pair of key matches
+        - In the format `(key, (value1, value2))`
+    - If multiple of the same key exists in 1 RDD, the resulting RDD will have every posible pair of values with that key.
+- Outer Join
+    - Left: All source RDD keys present
+        - If present in source but not argument: value = None
+    - Right: All argument RDD keys present
+        - If present in argument but not source: vaue = None
+    - Full: All keys present, value is none if no key exists in either RDD.
+    - Implementation of Optional in that prog lang is used (Some and None)
+
+**Sorting**
+
+Custom sort order can be provided via a custom comparison function
+- Java: `Comparator<>`
+- Scala: `Ordering[type]`
+- Python: A lambda function
+
+Ascendng / Descending order can be toggled via an argument as well.
+
+#### Actions on Pair RDDs
+
+- All traditional actions
+- `countByKey()` - Returns `(key, count)`
+- `collectAsMap()` - Returns `(key, value)` map
+- `lookup(key)` - Returns a list of values associated with provided key
+
+## Data Partitioning
+
+Consider the case where you have a large, relatively unchanging dataset, with small datasets coming in and running joins on them.
+
+`join()` by default does not know anything about how the keys are partitioned in the dataset.
+- Hence, both datasets are shuffled
+    - Shuffling: Distributing data across cluster workers to process it in parallel.
+    - Spark does this to ensure all the records with the same key are on the same node.
+- If you do a partition, then `persist()` (especially if large disparity in data set size), you can avoid the shuffling of the big, unchanged RDD, as Spark only needs to shuffle the smaller RDDs and send them to the matching nodes that containing its corresponding hash.
+    - Failure to `persist()` will result in the RDD re-partitioning the data every time. (aka shuffling again)
+    - Which defeats the purpose of using `partitionBy()`
+
+In Java / Scala, you can call `rdd.partitioner` to get its partitioner. Returns an `Optional`.
+- If no partitioning: `None`
+- Else: `Some(partitioner)`
+
+You can also provide a custom `Partitioner` which looks like this:
+
+TODO: Doublecheck which methods we need to override.
+```java
+class SamplePartitioner<Integer> extends Partitioner {
+    @Override
+    public int numPartitions {
+        ...
+    }
+
+    @Override
+    public int getPartition(Integer key) {
+        ...
+    }
+
+    @Override
+    public booleanequals(Object obj) {
+        ...
+    }
+}
+
+```
+
+Operations that benefit from partitioning
+- Most group / join functions
+    - e.g `join()`s, `reduceByKey()`, `lookup()`
+- On operations involving a single RDD:
+    - All values corresponding to some specific key will be computed on a single node
+    - Final value is returned to master
+- On operations involving 2 RDDs, partitioning will result in at least one of the RDDs to not be shuffled.
+
+Operations that affect partitioning
+- Spark does not check if your functions change the key.
+- Hence, most operations will return a RDD without partitioner.
+
+## Level of parallelism
+
+Each RDD has a fixed number of partitions that determine the degree of parallelism.
+- Spark will infer a sensible default value
+- Can be fine-tuned for performance
+    - a.k.a Improvable via performance testing potentially?
+
+Partitionings themselves can also be changed
+- `repartition()` shuffles teh data to create a new set of partitions.
+    - This is a fairly expensive operation.
+- `coalesce()` is more optimized, but only works if you are decreasng the number of RDD partitions. (a.k.a each partition is larger)
+
 
 

@@ -2,6 +2,8 @@
 
 from pyspark import SparkConf, SparkContext
 
+# Illustrates the difference between the joins.
+# (Basically the exact same as SQL)
 
 conf = SparkConf().setMaster("local").setAppName("My App")
 sc = SparkContext(conf = conf)
@@ -23,6 +25,11 @@ storeRating = [
 addr = sc.parallelize(storeAddress)
 rating = sc.parallelize(storeRating)
 
+print("Left Outer Join:")
 print(addr.leftOuterJoin(rating).collect())
+print("Right Outer Join:")
 print(addr.rightOuterJoin(rating).collect())
+print("Inner Join:")
 print(addr.join(rating).collect())
+print("Full Outer Join:")
+print(addr.fullOuterJoin(rating).collect())
