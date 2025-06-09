@@ -349,3 +349,66 @@ Same strategy as JSON: We can load as text, then process it. No standardization 
 See: Example in `spark_code`
 
 #### Saving
+
+We can simply use something like a `DictWriter` in python's `csv` lib to map a record into the "field1, field2, field3" or "field1  field2  field3" csv/tsv respectively.
+
+Then, we just run `saveAsTextFile()` to save to file.
+
+### SequenceFiles
+
+Previous 2 requies that we know the schema beforehand.
+
+**Flat File** - Simple file containing tabular data (e.g 1 row is 1 record)
+
+SequenceFiles are binary, but conceptually can be represented like this:
+```
+| Header (metadata) |
+|--------------------|
+| Key 1 (binary)   | Value 1 (binary) |
+|--------------------|-----------------|
+| Key 2 (binary)   | Value 2 (binary) |
+|--------------------|-----------------|
+| ...               | ...              |
+```
+
+#### Reading a SequenceFile
+- `sc.sequenceFile(filename, type, corresponding Writable class)`
+
+**Writable Classes**
+
+Many of the common types have a Writable
+
+| Type      | Writable                     |
+|-----------|------------------------------|
+| Integer   | IntWritable / VIntWritable   |
+| Long      | LongWritable / VLongWritable |
+| Float     | FloatWritable                |
+| Double    | DoubleWritable               |
+| Boolean   | BooleanWritable              |
+| byte[]    | BytesWritable                |
+| String    | Text                         |
+| T[]       | ArrayWritable<TW>            |
+| List<T>   | ArrayWritable<TW>            |
+| Map<A, B> | MapWritable<AW, BW>          |
+
+1. VInt / VLong writables are used when you have a large number of small numbers. (V means variable). Saves space compared to non-variable, where the same amount of bits is used to store a small number and a really large number
+2. TW/AW/BW are the corresponding writable types of T,A,B.
+
+If your type does not have a writable, you can implement it via the following:
+
+**Creating a custom Writable class**
+- Override from `org.apache.hadoop.io.Writable
+```java
+class xxxx extends Writable {
+    @Override
+    public void readFields(DataInput in) throws IOException {
+        ...
+    }
+
+    @Override
+    public void write(DataOutput out) throws IOException {
+        ...
+    }
+}
+```
+
