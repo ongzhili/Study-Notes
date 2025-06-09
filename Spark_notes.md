@@ -332,3 +332,18 @@ Most popular way is to load `.json` as text file and using a JSON parser to map 
     - py: standard lib
     - Scala / Java: Jackson
 
+#### Saving
+
+`data.map(<json_to_string_func>).saveAsTextFile(outputFile)`
+
+### Comma-Separated Values / Tab-Separated values (CSV & TSV)
+
+Often 1 record 1 line. Fields separated by a comma (or tab).
+
+Common practice for first fow to contain field names.
+
+#### Loading
+
+Same strategy as JSON: We can load as text, then process it. No standardization of format though. Use a library that works with your format.
+
+#### Saving
