@@ -20,3 +20,23 @@ def parse_csv(line):
 
 rdd = lines.map(parse_csv)
 print(rdd.collect())
+
+
+def loadLine(line):
+    # line[0] = filename, line[1] = file content
+    input = StringIO(line[1])
+    reader = csv.DictReader(input, fieldnames=["one", "two", "three"])
+    return reader
+data = sc.wholeTextFiles("./spark_code/file.csv").flatMap(loadLine)
+
+print(data.collect())
+
+def writeRecords(records):
+    """Write out CSV lines"""
+    output = StringIO()
+    writer = csv.DictWriter(output, fieldnames=["one", "two", "three"])
+    for record in records:
+        writer.writerow(record)
+    return [output.getvalue()]
+
+data.mapPartitions(writeRecords).saveAsTextFile("./spark_code/csv/output")
