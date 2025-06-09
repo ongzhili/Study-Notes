@@ -5,7 +5,7 @@
 ### Overview
 
 RDDs are Spark's core abstractions for working with data.
-- They are simply an immutable distributed collection of objects
+- Immutable distributed collection of objects
     - A RDD internally is split into multiple **partitions**
         - Each partition can be computed on different clusters / nodes
     - Can contain any object
@@ -121,8 +121,6 @@ RDDs in spark are lazily evaluated.
 
 ## Special RDDs
 
-Briefly touched on earlier, but there are some RDDs of certain types that Spark provides special operations on, and we will be covering them in the next section.
-
 ### Key/Value pair RDDs (Pair RDDs)
 
 Common in aggregation functions.
@@ -233,22 +231,29 @@ In Java / Scala, you can call `rdd.partitioner` to get its partitioner. Returns 
 
 You can also provide a custom `Partitioner` which looks like this:
 
-TODO: Doublecheck which methods we need to override.
 ```java
 class SamplePartitioner<Integer> extends Partitioner {
     @Override
     public int numPartitions {
         ...
+        // Returns number of partitions used
     }
 
     @Override
-    public int getPartition(Integer key) {
+    public int getPartition(Object key) {
         ...
+        // Returns which partition an object will be partitioned to
     }
 
     @Override
-    public booleanequals(Object obj) {
+    public boolean equals(Object obj) {
         ...
+        // Checks if 1 partitioner is equal to the other
+    }
+
+    @Override
+    public int hashCode() {
+        ... 
     }
 }
 
@@ -279,4 +284,51 @@ Partitionings themselves can also be changed
 - `coalesce()` is more optimized, but only works if you are decreasng the number of RDD partitions. (a.k.a each partition is larger)
 
 
+## Loading and Saving Data
+
+Sandbox examples are loaded / saved on a native language collection (like `List`) or regular text files.
+
+### File Formats
+
+Some commonly supported file formats:
+- `.txt`
+    - Assume 1 entry per line
+- `.json`
+    - Most libs require 1 record per line
+- `.csv`
+- SequenceFiles
+- Protocol buffers
+
+### Text Files
+
+#### Loading
+
+The simplest file to read.
+- 1 line = 1 element in RDD.
+- `sc.textfile("path/to/file")`
+- Possible to pass a directory too
+    - All files in the directory will be loaded into the RDD
+    - `wholeTextFiles()` can be used if files are small enough
+        - Obtain Pair RDD. Key = filename, Value = entire file content
+        - **DO NOT TRY THIS FOR LARGE FILES**
+
+#### Saving
+
+Outputting to text files is also simple
+- `saveAsTextFile("file-name")`
+- Creates a directory containing 1 file per computing node.
+
+### JSON
+
+Most popular way is to load `.json` as text file and using a JSON parser to map the values.
+- Likewise, using a JSON serialization library to do the opposite direction.
+
+#### Loading
+- Works nicely if: **1 json record per row**.
+    - Doesnt work with multiline json files.
+- Else: load whole file, then parse each line.
+
+- Recommended libraries:
+    - py: standard lib
+    - Scala / Java: Jackson
 
