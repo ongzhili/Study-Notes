@@ -7,11 +7,20 @@
 2. Throughput (of a TCP/UDP flow)
     - How many bits can be communicated per unit time
 3. End-To-End Delay
-    - Processing Delay + Queueing Delay + Transmission Delay + Propagation Delay
+    - Processing Delay (programs running protocols + extract package headers, etc)
+    - \+ Queueing Delay
+    - \+ Transmission Delay
+    - \+ Propagation Delay
 
-(TODO: FILLUP with more info)
+4. Response time (Round Trip Delay (RTT))
+    - Roughly 2x E2E delay
+    - Not necessarily the same due to routing
+
 
 ## Packet Switching vs Circuit Switching
+
+Packet Switching: Store and Forward
+![alt text](image.png)
 
 Packet Switching: Statistical Multiplexing
 - Consider case where 2 devices send packets to the same network device
