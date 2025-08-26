@@ -62,6 +62,11 @@ What does $\lambda$ mean?
 Applicable in this situation because of the memoryless property
 - $P(T > s + t | T > s) = P(T > t)$
 
+![alt text](image-1.png)
+
+- Left: Lambda higher -> higher arrival rate -> More likely (P(x)) that the waiting time (x) is shorter
+- Right: Lambda higher -> More likely that a new event arrives by a certain time (X <= x)
+
 ## Modelling the Packet flow: Poisson Process
 
 ```
