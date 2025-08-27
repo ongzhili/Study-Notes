@@ -125,9 +125,13 @@ Utilization $\rho$:
     - Understanding $\rho$
         - If $\rho$ = 0.7, server is busy 70% of the time
         - If $\rho \geq 1$: System is unstable.
+        - Queue size might still grow to infinity (As arrival time follows exponential distribution)
 
-- $\rho$ in Little's Law : (TODO)
-
+- $\rho$ in Little's Law : $\rho = \frac{\lambda}{\mu}$ = $\lambda E[S_i]$
+- $\rho$ = L, W = $E[S_i]$, $\lambda = \lambda$
+    - Average number of packets in the system
+    - $(P(0 packet) * 0 + P(1 packet) * 1)$
+    - This link only can process up to 1 at a time (so L is between 0,1 for stable systems)
 
 ### Birth-Death Process
 
