@@ -278,3 +278,63 @@ Originally, FedEx enjoyed competitive advantage with fleet of vehicles
 - Platform approach doesn't require fleet ownership
 - Platform can leverage on real-time market information
     - e.g Grab, GoJek
+
+
+## Notes from Coursera
+
+
+### Innovation platforms vs Transactional platforms
+
+- Innovation
+    - To provide a technological basis and environment for other companies or users to build, develop, and create new complementary products, services, or capabilities.
+- Transactional
+    - To connect different market actors and facilitate transactions or exchanges between them, often acting as an intermediary
+
+Think iOS (innovation) vs App Store (transactional)
+
+#### Orthogonal platforms (Non-transactional two-sided platforms)
+
+- Products or services that are based on the sale of different services to two groups of customers who do not come into direct contact with each other, relying on a unidirectional cross-side network externality
+    - as opposed to transactional platforms that facilitate direct transactions.
+        - e.g ads on newspapers vs online markeplaces
+
+- Client as a target strategy
+    - Platform leverages its client base (first side) as an asset to attract the second side (advertisers).
+    - Big examples: Twitter
+        - Build a strong client base
+            - Get data
+            - Display ads
+
+### Misperceptions of platforms
+#### "Global Platform"
+
+- Have to scale city by city / country by country and adapt to local laws and regulations
+- Actually very local beyond the surface
+    - Cultures, customer preferences
+        - Important to tailor their services to meet those specific needs
+    - Regulations
+        - Local approach helps platforms navigate these complexities and ensuring that they comply.
+
+#### "Very techy"
+
+- Platforms at the end of the day, are just making connections between people on the supply and demand side.
+- Very human-related
+
+These break common misconceptions about platforms.
+
+#### "For new startups only"
+
+- Can be adopted by existing companies / industries to stay competitive
+    - Real estate - platforms instead of property agents
+    - Insurance - Apps to allow users to manage policies, etc
+
+### Hybrid platforms
+- Different definitions of platforms can co-exist
+- Basically a platform that acts as many platforms at once
+    - Example: Facebook
+        - Users post and get data: Client as a source
+        - Facebook displays ads to users: Client as a target
+        - Facebook marketplace: Transactional two-sided
+
+- A platform grows and adapts overtime, adding new features and user types.
+    - Facebook evolved to not just a social network.
