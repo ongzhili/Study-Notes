@@ -211,5 +211,113 @@ EBIT = Total revenues + other income - costs - depreciation
 
 ## The Cash Flow Statement
 
+### Profits vs Cash Flows
+
+- Depreciation
+    - Profits subtract depreciation (non-cash expense)
+        - Its not cash leaving the system
+        - Its "cash still with you"
+    - Profits ignore cash expenditures on new capital (new assets you buy)
+        - Income statment does not include cost associated with buying the first place.
+        - e.g You buy equipment for a restaurant
+            - These equipment lasts 10 years
+            - Income statement: cost associated for a year
+                - Asset is used for a longer period
+    - To calc. cash produced by business, we have to add depreciation charge (not a cash payment) back to accounting profits and subtract expenditure on new capital equipment (cash payment)
+
+- Accrual Accounting
+    - Profits record income and expenses at time of sales, not when cash is collected (e.g delayed payment)
+        - If I buy all my equipment on the last day of the year
+        - If I sell all my goods on 1/1/new year
+            - "Big loss last year, big profit this year"
+                - Doesn't make sense.
+    - Profits do not consider changes in working capital
+
+### Cash Flow Statement
+
+- Financial Statement that shows the firm's cash reciepts and cash payments over a period of time
+    - A "video" of how cash was spent or obtained during the year
+
+- Direct method of constructing cash flow
+    - Add up all the reciepts
+- Legally required to show by an indirect method
+    - Construct cash flow statement from income and balance statement
+
+- Cash can be 3 things
+    - Operations
+    - Investments
+    - Financing
+        - Loan: getting cash
+        - Paying loan: losing cash
+        - Paying dividends: losing cash
+
+- In an ideal world, cash flow should match "cash and marketable securities" of year x+1 - year x, but:
+    - Companies make acquisitions
+    - Currencies fluctuate
+    - Other complications
+
+- Cash provided by operations:
+    - Don't include
+        - Cash
+        - Short term debt
+            - Included in cash flows from financing
+                - Do not double count
+        - Include everything in current assets and current liabilities (-ve) except for "cash and marketable securities" and "debt due for repayment"
+    - Include accounts recievable
+        - Income statement assumes they paid already
+            - But it might not have been paid yet.
+    - Include inventories
+        - "Paying money to buy inventory"
+        - If inventory decrease
+            - Used to create a sale
+            - Didn't spend money
+    - General rule:
+        - If asset increases in value
+            - cash outflow
+            - opposite applies
+        - Liability exists:
+            - Inflow of cash
+                - You only owe someone money because they loaned you
+
+- Cash flows from investments
+    - Capital expenditure
+        - e.g buying equipment to run the business
+    - Sales of long-term assets
+    - Other investing activities
+        - e.g spend money to invest
+
+
+- Cash provided for financing activities
+    - If debt increases, what does that mean?
+        - Someone gave you a loan
+            - => Cash inflow
+    - if debt decreases, you paid off a loan
+        - paying cash
+            - => Cash outflow
+
+    - Dividends
+        - Paying out => cash outflow
+    - Similar concept applies to others.
+
+### Free Cash Flow
+- Cash available for distribution to investors after firm pays for new investments or additions to working capital
+
+- Free Cash Flow = Net income + interest + depreciation - additions to net working capital + cashflow from investments
+
+    - Alternatively:
+        - Free cash flow = interest + cashflow from operations + cashflow from investments
 ## Taxes
 
+- Companies get benefit out of taking more debt
+    - Because debt is tax-exempt
+
+### Taxation Principles
+- Corporate Tax rate is 21% in the US.
+    - In cases of losses, government does not give you money (negative taxes)
+        - Instead, firm can carry losses forward, offset up to 80% of future years' income
+    - Interest is not taxable
+
+- Personal Income Tax
+    - Taes have a major impact on financial decisions
+    - **Marginal Tax rate** is the tax that the individual pays on each extra dollar of income
+    - **Average tax rate** is `total tax bill / total income`
