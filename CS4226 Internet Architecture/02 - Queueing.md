@@ -80,6 +80,7 @@ Applicable in this situation because of the memoryless property
 - Poisson is a good model because:
     - Memoryless property: Starting time doesn't matter
     - Merging 2 Poisson processes with $\lambda_1$ $\lambda_2$ creates a new poisson process with $\lambda = \lambda_1 + \lambda_2$
+        - Important property as that means a merged distribution is still memoryless
 
 
 Exponential vs Poisson
@@ -153,7 +154,7 @@ Utilization $\rho$:
 $\pi_i$: Percentage of time that exactly $i$ packets or customers in the system (e.g server + queue)
 - Also the probability that $P(L = i)$ that a random observation finds $i$ packets in the system.
 - For M/M/1 system, $\pi_i = P(L=i) = \rho^i(1-\rho)$
-- Follows a geometric distribution
+- Follows a geometric distribution (which is memoryless!)
 
 ### M/M/1
 Server + Queue
@@ -165,3 +166,59 @@ Queue:
 - Average queueing delay of packets: $E[D] = E[W] - \frac{1}{\mu}$
 
 Through this observations, we prove that $\lambda = \mu$ is unstable, as $E[W]$ and $E[L]$ approaches infinity.
+
+#### Relation to Throughput
+- In a stable system, $\lambda$.
+- Max possible rate $\mu$
+    - How high it can go before instability
+- Effectively min($\lambda, \mu$)
+
+### Notations (a review)
+
+- Times:
+    - time $t$
+    - arrival time $t_i$
+    - sojourn time $W_i = t_i^d - t_i$
+        - In a queueing system:
+            - $W_i = D_i + S_i$
+                - (D = queueing delay, S = service time)
+
+- Numbers:
+    - \# of packets / jobs / users $L(t)$
+    - in a M/M/1 queueing system: $E[L] = E[Q] + E[X]$
+        - mean no. of packets in system = in queue + in server
+        - $E[X] = P[X=0] * 0 + P[X=1] * 1 = P[X=1]$ (utilization of server)
+
+- Rates:
+    - arrival rate $\lambda$
+        - as a deterministic limit: $lim_{t \to \infty} \frac{N(t)}{t}$
+        - as a function of random variable: $\frac{1}{E[T]}$
+    - service rate $\mu$
+        - defined in a queueinjg system as $\frac{1}{E[S]}$ (expected service time)
+
+
+### Effective Bandwidth
+
+- Physical link capacity
+    - e.g 10 Mbps cable
+    - Upper theoretical processing limit of hardware
+- Effective bandwidth of a link
+    - Actual throughput that can be achieved
+    - Also depends on quality of service achieved
+
+- For an M/M/1 system?
+    - Maximum Achievable throughput
+        - Utilization is below some $\rho$ ?
+        - Average queueing delay is bounded by $D$ ?
+
+### Statistical Multiplexing vs TDM (Time divisible multiplexing)
+![alt text](image-2.png)
+
+- Analogy of queueing for a restaurant (SM) vs restaurant that only takes reservations (TDM)
+    - TDM: "Half of the time I serve blue, other half I serve red"
+        - $\frac{\mu}{2}$ per "reservation" 
+
+- Allocating each Poisson stream its own queue or a shared single queue
+    - $(\frac{\lambda}{k}, \frac{\mu}{k})$ vs $({\lambda}, {k})$
+    - We observe that utilization $\rho$ is actually the same (k cancels out)
+        - Each sub server is as busy as the aggregate system
