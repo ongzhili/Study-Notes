@@ -222,3 +222,119 @@ Through this observations, we prove that $\lambda = \mu$ is unstable, as $E[W]$ 
     - $(\frac{\lambda}{k}, \frac{\mu}{k})$ vs $({\lambda}, {k})$
     - We observe that utilization $\rho$ is actually the same (k cancels out)
         - Each sub server is as busy as the aggregate system
+    
+- But sojourn time increases under TDM. Why?
+    - For an M/M/1 queue:
+        - $E[W] = \frac{1}{\mu - \lambda} = \frac{1}{\mu (1-\rho)}$
+
+$E[W]_{\text{SM}} = \frac{1}{\mu - \lambda}$
+
+$\begin{aligned}
+E[W]_{\text{TDM}} 
+&= \frac{1}{\frac{\mu}{k} - \frac{\lambda}{k}} \\
+&= \frac{k}{\mu - \lambda}.
+\end{aligned}
+$
+
+This is **\(k\) times larger** than the single-queue case.
+
+#### Intuition
+
+- In **Statistical Multiplexing**, all \(k\) users share one fast server. Bursts from one stream can use idle capacity from others — this pooling effect smooths variability and lowers waiting times.
+
+- In **TDM**, each user only gets a **fraction** of the server capacity. Although utilization remains the same, the **service rate is slower** by \(k\), which increases waiting time:
+
+
+$E[W]_{\text{TDM}} = k \, E[W]_{\text{SM}}$
+
+
+Thus the **average sojourn time for each user increases by a factor of \(k\)** under TDM.
+
+Similarly, since
+
+$
+\mathbb{E}[Q] = \frac{\rho^2}{1-\rho}, 
+\qquad
+\mathbb{E}[L] = \frac{\rho}{1-\rho},
+$
+
+$
+L_{\text{TDM, per queue}} 
+= \frac{\lambda}{k} \cdot k W_{\text{single}} 
+= \lambda W_{\text{single}} 
+= L_{\text{single}}.
+$
+
+But with \(k\) queues total:
+
+$
+L_{\text{TDM, total}} = k \, L_{\text{single}},
+\qquad
+Q_{\text{TDM, total}} = k \, Q_{\text{single}}.
+$
+
+#### Intuition
+
+- **Statistical Multiplexing** pools all traffic into one fast server, reducing the total number of customers in the system.  
+- **TDM** divides capacity into \(k\) slower servers, preventing queues from sharing idle capacity.  
+- When summing across all \(k\) queues, both the **average number of waiting users** and the **total number of users** become approximately \(k\) times larger
+
+
+## Various queueing models
+- Capped queue size in real-world, so birth death model does not extend to infinity.
+- M/M/1 makes big assumptions on interarrival time and service time
+
+- Multiple servers
+    - M/M/2 (e.g)
+- Limited queue size
+    - M/M/1/K
+- Different service disciplies
+    - M/M/1/LIFO
+- General service and inter-arrival times
+    - M/G/1/, M/D/1
+    - G/M/1
+    - G/G/1
+
+**The more general we go, we start losing closed-form solutions**
+
+
+## Burke's Theorem
+
+![alt text](image-3.png)
+- If an M/M/1 system with arrival rate $\lambda$ starts in a steady state
+    - The departure process is also Poisson with rate $\lambda$
+    - Stable: Going in = going out
+    - The number of customers in the system at any time $t$ is independent of the sequence of departure times prior to time $t$
+        - Interpretation: The current number of customers in the system does not depend on the past departures.
+        - a.k.a memoryless property
+
+- We can use this to model multiple M/M/1 systems in sequence (output of first MM1 feeds into second MM1)
+    - a.k.a Tandem Queues
+
+## Tandem Queues
+
+![alt text](image-4.png)
+
+- Utilization of server i: $\rho_i = \frac{\lambda}{\mu_i}$
+- Joint probability $P[L_1 = j, L_2 = k] = P[L_1 = j] * P[L_2 = k]$
+    - = $\rho_1^j(1-\rho_1)\rho_2^k(1-\rho_2)$
+    - note: $\rho_i^j$ as rho is sort probability that a server is busy 
+
+## Acyclic network with probabilistic Routing
+![alt text](image-5.png)
+- Capturing routing in a network
+    - Different flows might take different path
+    - Each link is shared by different flows
+
+- Merging of poisson process
+- There is also a splitting process of poisson process
+    - If probability of j -> l is $\beta$, probability j -> m is $1-\beta$
+    - And each of these splits are also Poisson processes
+
+## Jackson Network
+![alt text](image-6.png)
+
+Even further generalization of the previous case
+- Cyclic networks (Loop in the system) also considered
+
+### Solving the Jackson Network
