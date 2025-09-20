@@ -338,3 +338,21 @@ Even further generalization of the previous case
 - Cyclic networks (Loop in the system) also considered
 
 ### Solving the Jackson Network
+
+- By Burke's Theorem:
+    - for an M/M/1 queue in steady state, departure process is Poisson
+    - Hence, we can treat the outputs of queues as Poisson inputs to downstream queues
+
+- Two step procedure
+    1. Determine Utilization $\rho_i$ of each server i
+    2. Apply the product form solution
+        - product form solution = **joint probability of an entire network being in a certain state** (e.g node L1 has 3 customers, L2 has 4, etc)
+        - $\mathbf{P}\{L_1 = l_1, \dots, L_n = l_n\} = \prod_{i=1}^n \mathbf{P}\{L_i = l_i\} = \prod_{i=1}^n \rho_i^{l_i}(1-\rho_i)$
+
+- How do we calculate $\rho_i$?
+    - How do we calculate effective arrival rate $\lambda_i$?
+        - Might be an aggregate traffic
+            - Outside arrivals directly to server $r_i$
+            - Feedback arrivals from other servers
+            - $\lambda_i = r_i + \sum_{j=1}^n\lambda_jP_{ji}$
+            - Where $P_{ji}$ = Probability that a job leaving $j$ will go to server $i$
