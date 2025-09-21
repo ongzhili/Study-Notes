@@ -41,6 +41,20 @@
         - You dont pay tax on the interest expense, so you "simulate" paying tax
     - = EBIT x (1 - tax rate)
 
+### Advantages of EVA
+- EVA Recognizes that companies need to cover their opportunity costs before adding value
+- EVA Makes cost of capital visible to operating managers
+    - Clear target: Earn at least cost of capital on assets employed
+- EVA can be improved by reducing assets that are not contributing enough to profits
+
+### Disadvantages
+- Not affected by everything else that moves stock market
+    - Aside from current performance
+- Book values are used.
+    - Older assets may be undervalued
+        - e.g using a vehicle for 20y when depreciation considered for 10y -> theoratically 'free' for 10y
+        - High ROA indicates business **DID** well using assets acquired in the **PAST**
+
 ## Accounting Rates of Return (ROR)
 - Return on Capital (ROC)
     - How much money your company is generating based on all the long-term capital it has.
@@ -53,3 +67,16 @@
     - = after-tax operating income / total assets
 - Return on Equity (ROE)
     - Net income / shareholder equity
+
+
+## Measuring Efficiency
+
+### Asset Turnover Ratio
+
+- ATR = Sales / Total Assets at start of year
+    - or Sales / Average total assets
+
+### Inventory Turnover
+- IT = cost of goods sold / inventory at start of year
+
+- avg. days in inventory = inventory at start of year / (cost of goods sold / 365)
