@@ -80,3 +80,46 @@
 - IT = cost of goods sold / inventory at start of year
 
 - avg. days in inventory = inventory at start of year / (cost of goods sold / 365)
+
+
+## Profit
+
+### The DuPont System / Formula
+
+- Profit Margin
+    - = net income / sales
+
+- Operating Profit Margin
+    - = after-tax operating income / sales
+
+- ROA = after-tax operating income / sales
+    - => ROA = (sales / assets) * (ATOI / sales)
+        - = asset turnover * operating profit margin
+
+In industries with rapid asset turnover, competition forces prices down, reducing profit margin (high asset turnover + high profit margin = many will come to industry)
+    - ROA is between 3% - 10% for almost all companies
+
+## Financial Leverage
+
+- Long-term debt ratio = long-term debt / long-term debt + equity
+- Long-term debt-equity ratio = long-term debt / equity
+- Leverage helps equity holders in good times but harms them in bad times
+    - Higher leverage = higher risk (larger part of capitalization is debt)
+
+- total debt ratio = total liabilites / total assets
+- times interest earned = EBIT / interest payments
+- cash coverage ratio = EBIT + depreciation / interest payment
+
+- $ROE = \frac{assets}{equity} * \frac{sales}{assets} * \frac{ATOI}{sales} * \frac{net-income}{ATOI}$
+    - = leverage ratio * asset turnover * operating profit margin * debt burden
+    - note that assets = debt + equity, so $\frac{assets}{equity} = 1 + \frac{debt}{equity}$
+
+
+## Liquidity
+Make sure you have enough to pay debt holders / suppliers / whoever you owe money
+- Net working capital to total assets ratio = net working capital / total assets = (current assets - current liabilities) / total assets
+- Current ratio = current assets / current liabilities
+
+Remove inventory part, only consider cash and marketable securities (easy to sell)
+- Quick ratio = cash + marketable securities + recievables / current liabilities
+- Cash ratio = cash + marketable securities / current liabilities
