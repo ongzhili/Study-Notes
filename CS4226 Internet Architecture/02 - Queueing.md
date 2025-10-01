@@ -160,10 +160,11 @@ $\pi_i$: Percentage of time that exactly $i$ packets or customers in the system 
 Server + Queue
 - Average # of packets in the system = $E[L] = \frac{\rho}{1-\rho}$
 - Average sojourn time of packets = $E[W] = \frac{1}{\mu - \lambda}$
+- $E[W] = \frac{E[L]}{\lambda}$
 
 Queue:
 - Average # of packets in the queue = $E[Q] = \frac{\rho^2}{1-\rho}$
-- Average queueing delay of packets: $E[D] = E[W] - \frac{1}{\mu}$
+- Average queueing delay of packets: $E[D] = E[W] - \frac{1}{\mu} = E[W] - E[S]$
 
 Through this observations, we prove that $\lambda = \mu$ is unstable, as $E[W]$ and $E[L]$ approaches infinity.
 

@@ -110,3 +110,23 @@ Algorithm that deterministically finds the max-min flow
 ![alt text](image-9.png)
 
 - Terminate when all 'buckets' are filled
+
+## Weighted Max-Min Fair Share
+
+- Extension: Weight Factor $\phi = (\phi_1, \phi_2, \phi_3, ...)$
+    - No customer gets more than demanded
+    - Unsatisfied demand split proportional to their weights
+    - Practical case: Give more bandwidth to certain links
+    - "Non-weighted" Max-Min fair share: $\phi = (1,1,1,...)$
+
+- Pseudocode
+    - Check each link locally (e.g $x_1 + $x_2 <= C_1; x_1 + x_2 + x_3 <= C_2, ...$)
+
+
+## Implementation: In reality
+
+- How to implement max-min fair flow allocation on packet-based flows?
+    - No centralized information
+    - Each router needs to implement local scheduling policies
+        - e.g track packets sent by router, use it to decide where to send next
+- Old solutions: Generalized Process Sharing (GPS) and Weighted Fair Queueing (WFQ)
