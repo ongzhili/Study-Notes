@@ -61,6 +61,33 @@
 3. **Forwarding Abstraction** needs to be defined
     - Choose which vendor to buy the more expensive control plane hardware
 
-#### Example of forwarding abstraction: OpenFlow!
+#### Example of forwarding abstraction: OpenFlow
 
-[alt text](image-10.png)
+![alt text](image-10.png)
+
+Flow rule: Match-Action pair
+
+- Match and map to action
+- Apply action
+
+
+#### Benefits
+
+- Pros
+    - New market landscape & value shift
+        - Shift control from vendors to operators that build networks
+    - Fast innovation
+        - None of the 'Cisco is slow at implementing x feature' issue
+        - Software can evolve independently of the hardware
+
+#### Where to implement the control plane?
+
+1. Run software that implements control plane on-switch
+    - Switches operate autonomously
+        - Have to communicate with peer switches throughout the network to construct local routing tables
+2. Make control plane physically decoupled from data plane
+    - Control plane is implemented off-switch
+        - e.g running in cloud
+    - Possible to make it logically centralized
+
+
