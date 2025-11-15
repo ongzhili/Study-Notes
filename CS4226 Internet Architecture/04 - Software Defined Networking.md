@@ -154,4 +154,259 @@ Flow rule: Match-Action pair
 - "Data Plane" is x86 CPU / OpenFlow switch
 - Northbound: Applications
 
+
+### Abstractions
+
+![alt text](image-13.png)
+
+### Layers in a SDN
+
+![alt text](image-14.png)
+
+A more fine-grained implementation
+- Note that control plane has a northbound interface, data plane has southbound interface
+
+### Users of SDNs
+
+1. Cloud providers
+    - Google, MSFT, etc
+2. Network operators (ISPs)
+    - Comcast, AT&T, etc
+3. Enterprises
+    - Universities / Private companies
+
 ## Use Cases
+
+### 1. Network Virtualization
+- Existing virtualization solutions **(NOT NETWORK VIRTUALIZATION)**
+    - VMs/ Containerization
+    - VPNs / VLANs 
+    - Limited scope: Virtualizing Address Space
+- Need from mordern clouds
+    - Create / Manage / Tear down networks **programatically**
+        - Without manual configs
+    - Disaggregation
+        - Single API entry point to perform actions
+    - Virtual network also has own private address space
+
+![alt text](image-15.png)
+
+- Virtual machines (can be on different hosts) still send and recieve packets through the underlying network
+- **vS: Virtual Switch**
+    - Behaves like a switch
+    - Uses the physical NIC
+
+### 2. Switching Fabrics
+
+![alt text](image-16.png)
+
+- Cloud datacenters
+    - Lower costs
+    - New Features
+
+- **Leaf-spine topology**
+    - **Spine Layer**
+        - High capacity switches
+        - Spine connects to all leaves
+        - Spines do not connect to each other
+    - **Leaf Layer** (Top-of-Rack (ToR)) switches - 1 per server rack
+        - Each leaf connects to every spine
+        - Servers connect only to leaf switches
+    - This topology guarantees the following:
+        - 2 hop Rack to Rack (multi-path)
+            - Leaf -> Spine -> Leaf
+            - Multi path allows for dynamic load balancing
+        - 2 hop Intra-rack Server to Server
+            - Server -> Leaf -> Server
+        - 4 hop Inter-rack Server to Server
+            - Server -> Leaf -> Spine -> Leaf -> Server
+
+### 3. Traffic Engineering
+
+- Optimizing how traffic flows through a network
+    - For wide-area links between data centers (WANs: Wide-Area networks)
+    - TE decides:
+        - Which path to use
+        - Bandwidth allocated
+        - Which traffic gets priority
+- Traffic classes with priorities
+    - Delay tolerance vs availability
+
+### 4. Software-Defined WANs
+
+![alt text](image-17.png)
+
+Allows MNCs to control everything from a centralized controller
+- Apply network policies
+- Topology + Performance
+- Make routing decisions by:
+    - Latency
+    - Bandwidth
+    - Priority
+    - Geographical location (Some data might legally be required to be processed within a certain datacenter, etc)
+
+### Summary
+
+- Killer appications
+    - Network virtualization
+    - Datacenter / Cloud computing
+
+
+
+## OpenFlow Protocol and Switch (SDN Protocols)
+
+![alt text](image-18.png)
+
+- Meter Table:
+    - Counting / Metering packets from certain traffic flows
+        - Primitive that we can configure programatically
+        - Bandwidth allocation
+- Group Table:
+    - Aggregate multiple flows
+        - Define a subset of ports = group
+            - e.g Multicast Groups
+    - Enable multiple actions
+
+- Multiple controller controls a single switch?
+    - Distributed System
+    - Each controller takes a subset of switch
+        - Synchronize with each other for a consistent global view
+    - Conflict?
+        - Not all the controllers communicate with the switch
+        - Enables all the controller to be aware of all the switches in the network
+        - Switches will run a leader election
+            - 1 Main controller takes responsibility
+                - Switch does the forwarding of information to all controllers to synchronize
+                - Instead of the controller
+                - Leader controller makes the actual change to the switch (when control plane needs to introduce new flow / entry / etc)
+
+### OpenFlow pipeline
+
+![alt text](image-19.png)
+
+- 2 Main components
+    - **Ingress** processing pipeline
+    - **Egress** processing pipeline
+
+- Allows us to apply logic based on separately:
+    - Where the packet comes from
+    - Where the package goes to
+
+### OpenFlow terminology associated with packets
+
+- Per packet from a packet flow:
+    - Header + header field
+    - Pipeline fields
+        - "Variables associated with the pipeline"
+        - Values attached to packet during pipeline processing
+        - e.g ingress port, metadata
+    - Action
+        - Operation that acts on a packet
+        - e.g drop, forward, modify (usually packet header only) (e.g decreasing TTL of pkt)
+    - Action set
+        - Multiple actions within an action set
+        - Accumulated while processed at flow tables
+        - Executed at the end of processing
+
+### OpenFlow flow entry
+
+
+- Flow entry in a flow table looks like this:
+    - | Match Fields | Priority | Counters | Instructions | Timeouts |
+        - Match fields: Packets are matched against
+            - Header / Pipeline fields
+            - May be wildcarded or bitmasked
+            - A generalization of the longest prefix prefix matching of a traditional IP
+        - Priority
+            - Choose from multiple matches (higher priority first)
+        - Instruction set
+            - List of actions to apply immediately
+            - Set of actions to add to the action set
+            - Modify pipeline processing (Go to another flow table - only downstream)
+
+- Contains a "default entry": Table-miss flow entry
+    - Does not match an entry in the flow table
+    - Typically send to control plane
+        - Control plane installs table entry so that future packet matches can deal with it
+    - Drop packet is also a potential action
+
+#### OF Flow Entry: Macro
+![alt text](image-20.png)
+
+#### OF Flow Entry: Micro (Within each flow table)
+![alt text](image-21.png)
+
+### OpenFlow Switch in the typical network flow (Even more Macro)
+
+![alt text](image-22.png)
+
+1. Step 1: Sender sends packet (with source & dest ip addr, etc)
+2. Step 2: SDN switch recieves packet. Attempt to match header with table flows
+3. Step 3 & 4 (If no match: a.k.a first time seeing):
+    - Step 3: Forward to control plane
+    - Step 4: Control plane configues a new table entry (and installs it into flow table)
+5. Packet gets forwarded to the target
+
+
+## Interfaces of a SDN
+
+- Eastbound and Westbound
+    - Different SDN networks that want to communicate with each other / Or even to Legacy non-SDN networks
+    - Instead of Northbound (SDN <-> Application) / Southbound (Control Plane <-> Data Plane)
+    - No standard API yet
+        - Northbound is not mature still, and is the current focus
+
+## ONOS (Open Network Operating System) Control Plane 
+
+- ONOS model
+    - Open northbound API
+    - Specification Abstraction
+- ONOS system
+    - Distribution abstraction
+
+### NOS (Network Operating System)
+
+- Can be thought of as a horizontally scalable cloud application
+    - Contains loosely coupled subsystems
+        - Each for 1 aspect of networking (e.g Topology, Host tracking)
+        - Contains its own service abstraction
+    - Similar to microservice architecture
+    - Includes a scalable + highly available key/value store
+
+### NOS Architecture
+
+![alt text](image-23.png)
+
+- Support multiple southbound APIs and multiple protocols (different adapters for different switches)
+    - "Driver"
+
+### Architecture of ONOS
+
+- Northbound Interfaces (NBI)
+    - Apps use it to stay informed about the network state
+        - e.g Topology, Intercept Packets
+- Distributed Core
+    - Responsible for managing network state and notifying apps about relevant changes in state
+    - Internal: Atomix (scalable key-value store)
+- Southbound Interface (SBI)
+    - Constructed from a set of plugins including shared protocol libs and device-specific drivers
+    - Essentially allows us to communicate with the devices themselves
+
+#### ONOS Abstractions
+
+![alt text](image-24.png)
+
+- Intent
+    - high-level Intent
+    - "What do you want, instead of how you want to operate the network"
+        - Delegate this to the network to do the job
+        - Network is ultimately responsible for how it is going to achieve that
+- Flow Objective
+    - Finer-grained control so that you can control the devices
+    - Assume that these devices are logical
+        - Does not include device-specific mechanisms
+        - P4? OpenFlow? 
+        - Delegate the action to the device
+- Flow Rule
+    - Even more devivce-specific
+    - Used to control the various pipelines, fixed-function + programmable
