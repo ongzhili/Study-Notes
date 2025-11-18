@@ -410,3 +410,78 @@ Allows MNCs to control everything from a centralized controller
 - Flow Rule
     - Even more devivce-specific
     - Used to control the various pipelines, fixed-function + programmable
+
+
+## P4: Programming Protocol-independent Packet Processors
+
+- Top-down design
+- Make the data plane programmable
+
+### P4: Introduction
+
+- Domain-specific to formally define data plane pipeline
+    - Protocol headers, lookup tables, etc
+- As long as hardware supports P4, we can use it!
+
+### Programmable Pipelines
+
+![alt text](image-26.png)
+
+- Protocol Independent Switch Architecture (PISA) reference model
+- 3 main components
+    - **Parser**
+        - Process packet header
+        - Extract all the needed packet header
+        - Leave payload untouched (**only touches packet header**)
+    - **Match-Action Pipeline**
+        - Define tables
+        - Define processing algorithm
+            - Modify / Add / Remove headers, etc
+    - **Deparser** (Serialized)
+        - Reassemble the packet header back to the payload
+            - Packet might look very different
+        - "Inverse" operation of parser
+
+### Logical to Physical
+- P4 needs to account for different hardware vendors
+    - Different chips implementing different physical pipelines
+    - Important, as marketplace is not converged
+        - Many different vendors with different NPU (Network Processing Unit)
+        - Different vendors have different fixed-function components
+
+- Solution: Vendor-specific logical pipelines
+    - $P4_{16}$ (2016 P4) approach: A combination of:
+        - Community-Developed:
+            - Language
+            - Core libraries
+        - Vendor-supplied:
+            - External libraries
+            - Architecture definition
+
+### P4: Terminology
+
+#### P4 Architecture
+
+- Definition
+    - Abstraction that defines how packets flow through a pipeline
+        - (Specifically, a programmable pipeline)
+    - Describes the logical pipeline
+        - General structure
+        - Processing behavior
+- Purpose
+    - Standardize way to describe functionality of a P4-programmable device
+    - Defines components and framework which a P4 program operates in
+
+#### P4 Target
+
+- Definition
+    - Specific device / platform (Hardware / Software (e.g virtual switch))
+    - The actual entity that processes the network packets
+- Purpose
+    - Concrete execution environment where a P4 program is deployed
+- Characteristics
+    - Has its own hardware capability
+    - May have vendor-specific optimizations / constraints that can impact how P4 code is:
+        - Mapped
+        - Executed
+        - e.g Compilation error when defined table is much larger than the hardware can accomodate
