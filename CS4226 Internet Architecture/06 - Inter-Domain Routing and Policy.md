@@ -278,15 +278,230 @@ Key Observations:
 
 1. Customer pays provider for access to internet
     - Provider exports customer's routes to everybody
-        - Entire internet can reach customer / customer's customers, etc
+        - Entire internet can reach customer
     - Customer export provier's routes to customers
         - Allows its own customers to use the upstream
 
 ### Peer-to-Peer relationship
+
+![alt text](image-39.png)
 
 1. Peers exchange traffic between customers
     - AS exports only customer routes to a peer
     - AS exports a peer's routes only to its customers
     - So that customers of 1 AS can transit traffic to customer of another AS through the peering link
 
-![alt text](image-39.png)
+
+
+### BGP Attributes: Continuation
+
+- LOCAL_PREF
+    - Influence **outbound** traffic
+        - It is used to influence the preferred outbound path when multiple routes to the same destination prefix exist.
+    - 4 byte unsigned integer (default value 100)
+        - Higher = more priority
+    - for BGP speaker to inform its other internal peers of its degree of preference for a specific route
+    - Propagated **within** an autonomous system
+        - Include in UPDATE messages that are sent to internal peers
+        - Not included in UPDATE message sent to external peers
+- MULTI_EXIT_DISC (MED)
+    - Influence **inbound** traffic
+        - "This path (MED) is longer (value is higher)"
+        - Allows control of inbound traffic by directing traffic to lower MED values (potentially)
+    - Used between two ASes when they have multiple connection points.
+    - 4 byte unsigned integer (default value 0)
+        - Lower = better
+    - for BGP speaker to discriminate among multiple entry points to a neighbouring AS to control inbound traffic
+    - Must not be propagated to neighbouring ASes
+
+- COMMUNITY
+    - 4 byte integer value 
+    - Label
+        - Used to group destination
+    - Useful in applying policies within and between ASes
+        - Apply policies based on COMMUNITY attribute
+
+
+### BGP best route selection: Common practices
+1. Calculation of degree of preference
+    - If route is learned from an internal peer:
+        - use LOCAL_PREF
+    - Else:
+        - use preconfigured policy
+
+2. Route Selection (recommended)
+    - Highest degree of LOCAL_PREF
+    - If Tie / Not used, Smallest number of AS numbers in AS_PATH
+    - If Tie / Not used, Lowest origin number in ORIGIN attribute
+    - If Tie / Not used, Most preferred MULTI_EXIT_DISC attribute
+    - If Tie / Not used, eBGP route > iBGP
+    - If Tie / Not used, Lowest interior cost based on NEXT_HOP attribute
+
+### Network Security: 
+
+#### BGP Prefix Hijacking
+
+![alt text](image-40.png)
+
+- Orange: advertising a destination ip that it does not own
+- Green: Original AS
+- Some traffic can be directed to orange (impersonator)
+
+#### BGP Subprefix Hijacking
+![alt text](image-41.png)
+
+- AS advertises a more specific IP prefix (/24 instead of /16)
+    - Everyone will eventually send traffic to this impersonator
+        - Due to longest prefix matching mechanism of IP
+            - This subnet mask is more specific
+
+
+#### Preventing (Sub)prefix Hijacking
+
+- Best Common practice for route filtering
+    - AS filters routes announced by customers
+        - Based on prefixes the customer owns
+
+- Industrial Trends
+    - Routre Origin Authorisation (ROA)
+    - Resource Public Key Infrastructure (RPKI) 
+
+
+### BGP Summary: How it is used in practice
+
+- Three classes of "knobs"
+    - Preference
+        - Add / Delete / Modify attributes
+    - Filtering
+        - Inbound / outbound filtering
+    - Tagging
+        - COMMUNITY attribute in BGP message
+
+- Applications
+    - Business relationships
+        - Influence decision process (LOCAL_PREF)
+        - Controlling route export (COMMUNITY)
+    - Traffic engineering 
+        - Inbound (MED / AS pre-pending)
+        - Outbound (LOCAL_PREF, IGP cost)
+        - Remote control (COMMUNITY)
+
+
+## Peer-to-Peer networks
+
+
+### Traditional communication model: Socket programming (Client-server model)
+
+- Asymmetric
+- Client initiates request, server provides response
+
+
+### P2P network
+
+![alt text](image-42.png)
+
+#### Properties
+- No always-on server or central entity
+- Arbitrary end systems directly communicate
+- Flat architecture / namespace
+#### Problems
+- Peers are intermittently connected
+    - They come and go (join / leave)
+    - Change IP addresses
+- Unreliable service providers
+- Staying connected is an issue
+- Resource lookup?
+
+### P2P Network Case study 1: Napster
+
+![alt text](image-43.png)
+
+- Based on a central index server
+    - User registers with this server
+    - Server sends a list of files to be shared
+    - Server knows all the peers and files in network
+
+- Search based on keywords
+    - Results:
+        - File Info + Peer that is sharing it
+
+- Advantages
+    - Consistent view of the network
+    - Fast and efficient searching
+    - Guarantee correct search answers
+        - Peer has the file -> You can initiate download
+- Disadvantages
+    - SPoF (If central index server goes down, the entire network is not functional)
+    - Large computation to handle queries (central server)
+    - Only download from a single peer (search result only shows 1 peer per result)
+
+
+### P2P network Case study 2: Gnutella
+![alt text](image-44.png)
+
+- Pure P2P network
+    - Absence of central index server (of Napster)
+    - Contains only peers
+
+- How to join without a central server?
+    - Peer needs the address of another active peer
+        - Obtained from a out-of-band channel (e.g forum, other communication network)
+    - New joiner learns about other peers and topology of network
+        - Queries are flooded into the network
+    - Download directly between peers
+
+- Advantages
+    - Fully distributed / Decentralized
+        - Robust against random node failures
+    - Open protocol
+    - Less susceptible to DoS
+- Disadvantages
+    - Inefficient query flooding
+        - Every time a new peer joins -> flood -> wastes a lot of network and peer resources
+    - Inefficient network management
+        - Constantly probe nodes
+
+### P2P network Case study 3: KaZaA
+
+![alt text](image-45.png)
+
+- Two kinds of nodes in the network
+    - Ordinary Nodes (ON): A normal peer user
+        - Obtain address of SN -> Send request and gives list of file to share
+        - SN starts keeping track of ON
+    - Supernodes (SN): User peer with more resources / responsibilities than ON
+        - Exchange information between themselves
+            - Flooding between the Supernodes
+            - More efficient that a Gnutella network as less resources wasted on flooding (even though it still floods)
+        - Do not form a complete mesh
+        -   Other SNs do not see ONs that do not connect to them
+- Forms a two-tier hierarchy
+    - Top: SN, Bottom: ON
+    - ON can only belong to only one SN at any time
+        - Can change at will
+        - SN acts as a "hub" for all ON connected to it
+            - Keeps track of files in those peers
+
+    
+### P2P network Case study 4: BitTorrent
+![alt text](image-46.png)
+
+- P2P Content Distribution
+- BitTorrent builds a network (swarm) for every file that is being distributed
+    - Initially, for each shared file, there is one server (seed) which hosts the original copy
+        - File is broken into chunks
+            - Can download from multiple peers (different chunk from different peer)
+    - "torrent" file: metadata about the content
+        - Hosted on a web server usually
+    - Client downloads torrent file
+        - Indicates sizes and checksums of chunks
+        - Identifies a tracker
+
+
+- **Big advantage over the previous 3: Can send "link" to a friend (.torrent file)**
+    - "link" always refers to the same file
+        - Acts as the unique identifier for a specific file
+            - Other 3 P2P networks do not have this
+            - Guarantee 1:1 correspondence (as opposed to filename, metadata matching)
+
+
