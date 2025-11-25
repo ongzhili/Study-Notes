@@ -504,4 +504,257 @@ Key Observations:
             - Other 3 P2P networks do not have this
             - Guarantee 1:1 correspondence (as opposed to filename, metadata matching)
 
+#### Components of BitTorrent
 
+1. Tracker
+    - Server that keeps track of which seeds and peers are in the swarm
+    - Does not participate in file distribution
+
+2. Torrent
+    - Group of peers exchanging chunks of a file
+3. Swarm
+    - Seeds + Peers
+
+#### BitTorrent: Technical details
+
+- File divided into 256KB chunks (Arbitrarily set, no particular reson)
+
+- Peer joining torrent
+    - Has no chunks initially
+    - Will accumulate chunks over time
+    - Registers with tracker to get a list of peers
+        - Only connects to a subset of them ("neighbours")
+    
+- When downloading:
+    - Peer uploads chunks to others
+
+- Peers may come and go
+    - Peer can leave (selfish) or remain (altruistic) after obtaining entire file
+
+#### BitTorrent: Strategies
+    - Pulling Chunks
+        - At any given time, peers have different chunks
+            - Periodically, peer asks neighbours for which chunks they have
+                - Sends requests for missing chunks
+                    - Rarest first
+    - Pushing chunks: Tit-for-tat
+        - Peer sends chunks to four neighbours currently sending peer chunk at highest rate
+            - Periodically evaluate this top 4 every 10s
+        - Every 30s randomly select another peer and start sending chunks
+            - New peer may join top 4
+            - "Optimistically un-choke"
+
+
+### P2P: Key technologies for P2P lookup services
+
+
+How do I find objects?
+- Searching
+    - Each object uniquely identifiable
+        - Need unique identifier (like names)
+    - Object locaiton can be made efficient
+        - Need to maintain structure required for addressing
+- Addressing
+    - No need to know unique names
+    - Hard to make efficient
+    - Need to compare to actual objects to know if they are the same
+
+Depends on:
+- How network is formed
+- Where objectives are placed
+- How objects can be found efficiently
+
+
+#### Two types of P2P
+
+1. Unstructured Networks / Systems
+    - Searching is required
+    - Peers are free to:
+        - Join anywhere
+        - Choose neighbours freely
+    - Objects are stored anywhere
+2. Structured Networks / Systems
+    - Allow for addressing / deterministic routing
+    - Network structure determines where peers belong in the net and where objects are stored
+
+
+#### Key-value Store
+
+- Database contains entries in (key,value) pairs
+    - Key: ID number, value: human name
+    - Key: content name/type, value: IP addr
+
+- Operations
+    - Put(Key, value)
+    - Get(key) -> value
+
+- Looks like a table
+    - Finding an object takes O(N)...
+        - Use a Hash Table!
+            - Insertion / Deletion / Lookup are all O(1)!
+
+#### DHT (Distributed Hash Table)
+
+![alt text](image-47.png)
+
+Key idea: Distribute hash buckets to peers
+
+Challenge: Design and implement efficient mechanism to:
+- Find which peer is responsible for which hash bucket
+- Route between peers
+
+Principles
+1. Each node is responsible for at least 1 bucket
+    - Changes as nodes join and leave
+
+2. Nodes communicate among themselves to find responsible node
+    - DHT is efficient when communication is scalable
+
+3. DHTs support all hash table operations
+
+##### DHT Case Study: Chord
+
+- Uses SHA-1 hash function
+    - 160-bit identification for
+        - Nodes
+        - Objects
+    - Same hash function for node and object
+        - Node ID hash from IP address
+        - Object ID hashed from object name
+
+- Organized in a ring which wraps around
+    - Nodes keep track of predecessor and successor
+    - Think of hash ring in system design
+
+- Assign identifier to each node / object in the range [0, $2^m - 1$] (This is the namespace)
+    - Each identifier can be represented by m bits (160 in SHA-1)
+    - Assign (key,value) pairs to nodes / peers
+        - Assign to closest ID available
+        - Convention is to use immediate successor
+            - e.g Smallest integer larger than hash
+
+**Simple example of 3 bits**
+
+![alt text](image-48.png)
+
+- How do I find a node? (Routing)
+    - Generally takes O(N) steps
+        - N = amount of nodes
+        - Bad for large N.
+
+- Solution: Add shortcut
+    - Each node n maintains a finger table that
+        - Includes at most m shortcuts
+        - ith finger / shortcut is at least $2^{i-1}$ far apart
+
+**Finger Table**: An example calculation
+
+![alt text](image-49.png)
+
+![alt text](image-50.png)
+
+Node 3
+| k | Calculation of start        | start | interval  | first node ≥ start |
+|---|------------------------------|--------|-----------|---------------------|
+| 1 | 3 + 2^0 = 4                  | 4      | [4, 5)    | 4                   |
+| 2 | 3 + 2^1 = 5                  | 5      | [5, 7)    | 6                   |
+| 3 | 3 + 2^2 = 7                  | 7      | [7, 3)    | 0                   |
+
+Node 6
+| k | Calculation of start        | start | interval  | first node ≥ start |
+|---|------------------------------|--------|-----------|---------------------|
+| 1 | 6 + 2^0 = 7                  | 7      | [7, 0)    | 0                   |
+| 2 | 6 + 2^1 = 8 mod 8 = 0        | 0      | [0, 2)    | 0                   |
+| 3 | 6 + 2^2 = 10 mod 8 = 2       | 2      | [2, 6)    | 2                   |
+
+
+
+**Finger Table**: Example of Node Joining
+
+![alt text](image-51.png)
+
+**Consider this case, where only node 1 is here.**
+
+Node 1:
+
+| start | interval  | first node ≥ start |
+|--------|-----------|---------------------|
+| 2      | [2, 3)    | 1                   |
+| 3      | [3, 5)    | 1                   |
+| 5      | [5, 1)    | 1                   |
+
+**After Node 2 Joins: [1, 2]**
+
+Node 1:
+| start | interval  | first node ≥ start |
+|--------|-----------|---------------------|
+| 2      | [2, 3)    | **2**                   |
+| 3      | [3, 5)    | 1                   |
+| 5      | [5, 1)    | 1                   |
+
+Node 2:
+
+| start | interval  | first node ≥ start |
+|--------|-----------|---------------------|
+| 3      | [3, 4)    | 1                   |
+| 4      | [4, 6)    | 1                   |
+| 6      | [6, 2)    | 1                   |
+
+**After Node 0, 6 Joins: [0,1,2,6]**
+
+Node 0:
+
+| start | interval  | first node ≥ start |
+|--------|-----------|---------------------|
+| 1      | [1, 2)    | 1                   |
+| 2      | [2, 4)    | 2                   |
+| 4      | [4, 0)    | 6                   |
+
+Node 1:
+
+| start | interval  | first node ≥ start |
+|--------|-----------|---------------------|
+| 2      | [2, 3)    | 2                   |
+| 3      | [3, 5)    | 6                   |
+| 5      | [5, 1)    | 6                   |
+
+Node 2:
+
+| start | interval  | first node ≥ start |
+|--------|-----------|---------------------|
+| 3      | [3, 4)    | 6                   |
+| 4      | [4, 6)    | 6                   |
+| 6      | [6, 2)    | 6                   |
+
+Node 6:
+
+| start | interval  | first node ≥ start |
+|--------|-----------|---------------------|
+| 7      | [7, 0)    | 0                   |
+| 0      | [0, 2)    | 0                   |
+| 2      | [2, 6)    | 2                   |
+
+
+
+**Routing**
+
+Use same example: Nodes: [0,1,2,6]
+Assume a node caches values that are < node.val (e.g 6 stores 3,4,5,6)
+
+I Query node 1: hash(key) = 7
+
+1. Since 7 > 1 and Since 5 <= 7 < 1 (+ 8): We query node 6
+2. Since 7 > 6 and Since 7 <= 7 < 0 (+ 8): We query node 0
+3. Since 0 (+ 8) > 7: We obtain our content from node 0's table.
+
+
+**Node Leave**
+
+To handle each node departure, each node must know the IP address of its two successors
+- Each node periodically pings its 2 successors to see if they are still alive.
+
+Example: [0,1,2,6]
+- Peer 1 leaves.
+- Peer 0 detects peer 1 leaving (ping no response)
+    - Set immediate successor to 2
+    - Set successor of successor to successor of 2 (6)
